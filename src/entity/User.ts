@@ -1,19 +1,23 @@
-import { Column, Entity } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Order } from "./order";
 
 @Entity()
 export class User {
-  @Column({ primary: true, generated: "uuid" })
-  id: string | undefined;
+  @PrimaryGeneratedColumn("uuid")
+  id!: string;
 
   @Column("varchar", { length: 255 })
-  firstName: string | undefined;
+  firstName!: string;
 
   @Column("varchar", { length: 255 })
-  lastName: string | undefined;
+  lastName!: string;
 
   @Column("varchar", { length: 255 })
-  email: string | undefined;
+  email!: string;
 
   @Column("varchar", { length: 255 })
-  password: string | undefined;
+  password!: string;
+
+  @OneToMany(() => Order, (order) => order.user)
+  orders!: Order[];
 }

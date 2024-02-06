@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { User } from "../entity/user";
 import { Book } from "../entity/book";
 import { Order } from "../entity/order";
+import { Cart } from "../entity/Cart";
 
 dotenv.config();
 
@@ -15,7 +16,7 @@ const AppDataSource = new DataSource({
   database: process.env.DB_NAME,
   synchronize: true,
   logging: true,
-  entities: [User, Book, Order],
+  entities: [User, Book, Order, Cart],
   subscribers: [],
   migrations: [],
 });

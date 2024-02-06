@@ -1,24 +1,24 @@
-import { Column, Entity } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 type tags = "fiction" | "non-fiction" | "science" | "essay";
 
 @Entity()
 export class Book {
-  @Column({ primary: true, generated: "uuid" })
-  id: string | undefined;
+  @PrimaryGeneratedColumn("uuid")
+  id!: string;
 
   @Column("varchar", { length: 255 })
-  title: string | undefined;
+  title!: string;
 
   @Column("varchar", { length: 255 })
-  writer: string | undefined;
+  writer!: string;
 
   @Column("text")
-  cover: string | undefined;
+  cover!: string;
 
   @Column("money")
-  point: number | undefined;
+  point!: number;
 
   @Column("varchar", { array: true })
-  tags: tags[] | undefined;
+  tags!: tags[];
 }
