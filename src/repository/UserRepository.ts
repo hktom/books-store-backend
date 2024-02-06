@@ -3,10 +3,8 @@ import { User } from "../entity/user";
 
 export interface IUserRepository {
   getUsers(): Promise<User[]>;
-  getUserById(id: string): Promise<User | any>;
+  getUserByEmail(email: string): Promise<User | any>;
   createUser(user: any): Promise<User>;
-  updateUser(id: string, payload: any): Promise<User | null>;
-  deleteUser(id: string): Promise<User | null>;
 }
 
 class UserRepository implements IUserRepository {
@@ -20,8 +18,8 @@ class UserRepository implements IUserRepository {
     return await this.repository.find();
   }
 
-  async getUserById(id: string) {
-    return await this.repository.findOneBy({ id: id });
+  async getUserByEmail(email: string) {
+    return await this.repository.findOneBy({ email: email });
   }
 
   async createUser(payload: any) {
@@ -31,26 +29,6 @@ class UserRepository implements IUserRepository {
     user.email = payload.email;
     user.password = payload.password;
     return await this.repository.save(user);
-  }
-
-  async updateUser(id: string, payload: any) {
-    let user = await this.getUserById(id);
-    if (user) {
-      user.firstName = payload.firstName || user.firstName;
-      user.lastName = payload.lastName || user.lastName;
-      user.email = payload.email || user.email;
-      user.password = payload.password || user.password;
-      return await this.repository.save(user);
-    }
-    return null;
-  }
-
-  async deleteUser(id: string) {
-    let user = await this.getUserById(id);
-    if (user) {
-      return await this.repository.remove(user);
-    }
-    return null;
   }
 }
 
