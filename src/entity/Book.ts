@@ -1,5 +1,14 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
+export interface IBook {
+  id: string;
+  title: string;
+  writer: string;
+  cover: string;
+  point: number;
+  tags: tags[];
+}
+
 type tags = "fiction" | "non-fiction" | "science" | "essay";
 
 @Entity()

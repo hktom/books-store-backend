@@ -1,6 +1,14 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Order } from "./Order";
 
+export interface IUser {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  orders: Order[];
+}
 
 @Entity()
 export class User {

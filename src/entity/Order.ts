@@ -9,6 +9,14 @@ import {
 import { Cart } from "./Cart";
 import { User } from "./user";
 
+export interface IOrder {
+  id: string;
+  total: number;
+  status: string;
+  carts: Cart[];
+  user: User;
+}
+
 @Entity()
 export class Order {
   @PrimaryGeneratedColumn("uuid")

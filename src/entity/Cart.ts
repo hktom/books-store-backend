@@ -8,6 +8,14 @@ import {
 import { Book } from "./Book";
 import { Order } from "./Order";
 
+export interface ICart {
+  id: string;
+  quantity: number;
+  total: number;
+  book: Book;
+  order: Order;
+}
+
 @Entity()
 export class Cart {
   @PrimaryGeneratedColumn("uuid")
