@@ -1,5 +1,5 @@
 import { DataSource, EntityTarget, Repository } from "typeorm";
-import { User } from "../entity/user";
+import { User } from "../entity/User";
 
 export interface IUserRepository {
   getUsers(): Promise<User[]>;

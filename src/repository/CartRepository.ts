@@ -52,3 +52,5 @@ class CartRepository implements ICartRepository {
     return null;
   }
 }
+
+export default CartRepository;

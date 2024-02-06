@@ -1,6 +1,9 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import AppDataSource from "./config/AppDataSource";
+import BookRepository from "./repository/BookRespository";
+import { Book } from "./entity/Book";
+import { authenticationController } from "./config/bootstrap";
 
 dotenv.config();
 
@@ -17,6 +20,8 @@ AppDataSource.initialize()
 app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");
 });
+
+app.get("/login", authenticationController.login);
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);

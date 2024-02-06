@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Cart } from "./Cart";
-import { User } from "./user";
+import { User } from "./User";
 
 export interface IOrder {
   id: string;

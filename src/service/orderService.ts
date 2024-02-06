@@ -40,3 +40,5 @@ class OrderService implements IOrderService {
     return await this.orderRepository.deleteOrder(id);
   }
 }
+
+export default OrderService;
