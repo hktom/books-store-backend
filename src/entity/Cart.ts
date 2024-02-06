@@ -5,8 +5,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Book } from "./book";
-import { Order } from "./order";
+import { Book } from "./Book";
+import { Order } from "./Order";
 
 @Entity()
 export class Cart {

@@ -6,8 +6,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { User } from "./user";
 import { Cart } from "./Cart";
+import { User } from "./user";
 
 @Entity()
 export class Order {
