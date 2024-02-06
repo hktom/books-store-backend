@@ -4,7 +4,7 @@ import { Book, IBook } from "../entity/Book";
 export interface IBookRepository {
   getBooks(): Promise<any>;
   getBookById(id: string): Promise<any>;
-  createBook(book: IBook): Promise<any>;
+  createBook(book: Partial<IBook>): Promise<any>;
   updateBook(id: string, payload: Partial<IBook>): Promise<any>;
   deleteBook(id: string): Promise<any>;
 }

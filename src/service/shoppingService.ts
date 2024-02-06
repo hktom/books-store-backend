@@ -1,9 +1,10 @@
+import { IBook } from "../entity/Book";
 import { IBookRepository } from "../repository/BookRespository";
 
 export interface IShoppingService {
-  getShoppingList(): Promise<any>;
+  getShoppingList(page: number): Promise<any>;
   getShoppingItemById(id: string): Promise<any>;
-  createShoppingItem(payload: any): Promise<any>;
+  createShoppingItem(payload: Partial<IBook>): Promise<any>;
   updateShoppingItem(id: string, payload: any): Promise<any>;
   deleteShoppingItem(id: string): Promise<any>;
 }
@@ -11,15 +12,16 @@ export interface IShoppingService {
 class ShoppingService implements IShoppingService {
   constructor(private bookRepository: IBookRepository) {}
 
-  async getShoppingList() {
-    return await this.bookRepository.getBooks();
+  async getShoppingList(page: number) {
+    let books = await this.bookRepository.getBooks();
+    return books.slice((page - 1) * 10, page * 10);
   }
 
   async getShoppingItemById(id: string) {
     return await this.bookRepository.getBookById(id);
   }
 
-  async createShoppingItem(payload: any) {
+  async createShoppingItem(payload: Partial<IBook>) {
     return await this.bookRepository.createBook(payload);
   }
 

@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import AppDataSource from "./config/AppDataSource";
 import { bootstrap } from "./config/bootstrap";
 import AuthenticationController from "./controller/authenticationController";
+import BookController from "./controller/bookController";
 
 dotenv.config();
 
@@ -24,7 +25,12 @@ const authenticationController = new AuthenticationController(
   authenticationService
 );
 
-app.get("/books", (req: Request, res: Response) => res.send("Express + TypeScript Server"));
+const bookController = new BookController(shoppingService);
+
+app.get("/books", (req: Request, res: Response) => bookController.getBooks(req, res));
+app.get("/book/:id", (req: Request, res: Response) => bookController.getBookById(req, res));
+app.post("/book/create", (req: Request, res: Response) => bookController.createBook(req, res));
+
 app.post("/login", (req: Request, res: Response) => authenticationController.login(req, res));
 app.post("/register", (req: Request, res: Response)=> authenticationController.register(req, res));
 app.get("/logout", (req: Request, res: Response) => authenticationController.logout(req, res));
