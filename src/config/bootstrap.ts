@@ -8,19 +8,43 @@ import CartRepository from "../repository/CartRepository";
 import OrderRepository from "../repository/OrderRepository";
 import UserRepository from "../repository/UserRepository";
 import AuthenticationService from "../service/authenticationService";
+import JwtService from "../service/jwtService";
 import OrderService from "../service/orderService";
 import ShoppingService from "../service/shoppingService";
 import AppDataSource from "./AppDataSource";
 
-const bookRepository = new BookRepository(AppDataSource, Book);
-const userRepository = new UserRepository(AppDataSource, User);
-const orderRepository = new OrderRepository(AppDataSource, Order);
-const cartRepository = new CartRepository(AppDataSource, Cart);
+// export const bootstrap = (req: Request, res: Response, next: any) => {};
 
-const authenticationService = new AuthenticationService(userRepository);
-const orderService = new OrderService(orderRepository);
-const shoppingService = new ShoppingService(bookRepository);
+export interface IBootstrap {
+  authenticationService: AuthenticationService;
+  orderService: OrderService;
+  shoppingService: ShoppingService;
+  jwtService: JwtService;
+}
 
-export const authenticationController = new AuthenticationController(
-  authenticationService
-);
+export const bootstrap = (): IBootstrap => {
+  const bookRepository = new BookRepository(AppDataSource, Book);
+  const userRepository = new UserRepository(AppDataSource, User);
+  const orderRepository = new OrderRepository(AppDataSource, Order);
+  const cartRepository = new CartRepository(AppDataSource, Cart);
+  const jwtService = new JwtService();
+
+  const authenticationService = new AuthenticationService(
+    userRepository,
+    jwtService
+  );
+
+  const orderService = new OrderService(orderRepository);
+  const shoppingService = new ShoppingService(bookRepository);
+
+  return {
+    jwtService,
+    authenticationService,
+    orderService,
+    shoppingService,
+  };
+};
+
+// export const authenticationController = new AuthenticationController(
+//   new AuthenticationService(userRepository, jwtService)
+// );

@@ -2,7 +2,7 @@ import { DataSource, EntityTarget, Repository } from "typeorm";
 import { User } from "../entity/User";
 
 export interface IUserRepository {
-  getUsers(): Promise<User[]>;
+  getUsers(): Promise<any[]>;
   getUserByEmail(email: string): Promise<User | any>;
   createUser(user: any): Promise<User>;
 }

@@ -1,15 +1,23 @@
-import express, { Express, Request, Response } from "express";
+import express, { Express, Request, Response, response } from "express";
 import dotenv from "dotenv";
 import AppDataSource from "./config/AppDataSource";
-import BookRepository from "./repository/BookRespository";
-import { Book } from "./entity/Book";
-import { authenticationController } from "./config/bootstrap";
+import { bootstrap } from "./config/bootstrap";
+import AuthenticationController from "./controller/authenticationController";
+import { User } from "./entity/User";
 
 dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
 app.use(express.static("public"));
+app.use(express.json());
+
+const { authenticationService, orderService, shoppingService, jwtService } =
+  bootstrap();
+
+const authenticationController = new AuthenticationController(
+  authenticationService
+);
 
 AppDataSource.initialize()
   .then(() => {
@@ -21,7 +29,17 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");
 });
 
-app.get("/login", authenticationController.login);
+app.post("/login", (req: Request, res: Response) => {
+  // authenticationController.login(req, res);
+  // AppDataSource.getRepository(User)
+  //   .find()
+  //   .then((users) => {
+  //     console.log(users);
+  //   });
+  res.send("hello");
+});
+// app.post("/register", authenticationController.register);
+// app.get("/logout", authenticationController.logout);
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);

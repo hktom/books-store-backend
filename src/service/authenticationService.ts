@@ -1,20 +1,24 @@
 import { IUserRepository } from "../repository/UserRepository";
+import { IJwtService } from "./jwtService";
 
 export interface IAuthenticationService {
-  login(email: string, password: string): Promise<string>;
+  login(email: string, password: string): Promise<string | null>;
   register(user: any): Promise<string>;
   logout(token: string): Promise<void>;
 }
 
 class AuthenticationService implements IAuthenticationService {
-  constructor(private userRepository: IUserRepository) {}
+  constructor(
+    private userRepository: IUserRepository,
+    private jwtService: IJwtService
+  ) {}
 
   async login(email: string, password: string) {
     const user = await this.userRepository.getUserByEmail(email);
     if (user && user.password === password) {
-      return "Login successful";
+      return this.jwtService.generateToken(user.id);
     }
-    return "Login failed";
+    return null;
   }
 
   async register(user: any) {
@@ -26,6 +30,5 @@ class AuthenticationService implements IAuthenticationService {
     // remove token from session
   }
 }
-
 
 export default AuthenticationService;
