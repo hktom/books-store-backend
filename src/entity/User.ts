@@ -27,6 +27,6 @@ export class User {
   @Column("varchar", { length: 255 })
   password!: string;
 
-  @OneToMany(() => Order, (order) => order.user)
+  @OneToMany(() => Order, (order) => order.user, { nullable: true })
   orders!: Order[];
 }

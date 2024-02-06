@@ -1,9 +1,10 @@
+import { IUser } from "../entity/User";
 import { IUserRepository } from "../repository/UserRepository";
 import { IJwtService } from "./jwtService";
 
 export interface IAuthenticationService {
   login(email: string, password: string): Promise<string | null>;
-  register(user: any): Promise<string>;
+  register(user: Partial<IUser>): Promise<string | null>;
   logout(token: string): Promise<void>;
 }
 
@@ -13,17 +14,29 @@ class AuthenticationService implements IAuthenticationService {
     private jwtService: IJwtService
   ) {}
 
+  private async getUserByEmail(email: string) {
+    return this.userRepository.getUserByEmail(email);
+  }
+
   async login(email: string, password: string) {
-    const user = await this.userRepository.getUserByEmail(email);
+    const user = await this.getUserByEmail(email);
     if (user && user.password === password) {
       return this.jwtService.generateToken(user.id);
     }
     return null;
   }
 
-  async register(user: any) {
-    await this.userRepository.createUser(user);
-    return "Registration successful";
+  async register(payload: Partial<IUser>) {
+    let user = await this.getUserByEmail(payload.email!);
+    if (user) {
+      return null;
+    }
+    user = await this.userRepository.createUser(payload);
+    if (!user) {
+      return null;
+    }
+
+    return this.login(user.email, user.password);
   }
 
   async logout(token: string) {
