@@ -3,6 +3,7 @@ import { IUserRepository } from "../repository/UserRepository";
 import { IJwtService } from "./jwtService";
 
 export interface IAuthenticationService {
+  me(token: string): Promise<IUser | null>;
   login(email: string, password: string): Promise<string | null>;
   register(user: Partial<IUser>): Promise<string | null>;
   logout(token: string): Promise<void>;
@@ -13,6 +14,14 @@ class AuthenticationService implements IAuthenticationService {
     private userRepository: IUserRepository,
     private jwtService: IJwtService
   ) {}
+
+  async me(token: string) {
+    const userEmail = this.jwtService.verifyToken(token);
+    if (!userEmail) {
+      return null;
+    }
+    return await this.userRepository.getUserByEmail(userEmail);
+  }
 
   private async getUserByEmail(email: string) {
     return this.userRepository.getUserByEmail(email);

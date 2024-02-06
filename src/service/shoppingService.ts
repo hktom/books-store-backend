@@ -14,7 +14,7 @@ class ShoppingService implements IShoppingService {
 
   async getShoppingList(page: number) {
     let books = await this.bookRepository.getBooks();
-    return books.slice((page - 1) * 10, page * 10);
+    return books.slice((page - 1) * 4, page * 4);
   }
 
   async getShoppingItemById(id: string) {

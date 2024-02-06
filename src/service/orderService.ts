@@ -1,3 +1,5 @@
+import { IBookRepository } from "../repository/BookRespository";
+import { ICartRepository } from "../repository/CartRepository";
 import { IOrderRepository } from "../repository/OrderRepository";
 
 export interface IOrderService {
@@ -14,7 +16,11 @@ export interface IOrderService {
 }
 
 class OrderService implements IOrderService {
-  constructor(private orderRepository: IOrderRepository) {}
+  constructor(
+    private orderRepository: IOrderRepository,
+    private cartRepository: ICartRepository,
+    private bookRepository: IBookRepository
+  ) {}
 
   async createOrder(order: any) {
     return await this.orderRepository.createOrder(order);
