@@ -34,7 +34,11 @@ export const bootstrap = (): IBootstrap => {
     jwtService
   );
 
-  const orderService = new OrderService(orderRepository);
+  const orderService = new OrderService(
+    orderRepository,
+    cartRepository,
+    bookRepository
+  );
   const shoppingService = new ShoppingService(bookRepository);
 
   return {

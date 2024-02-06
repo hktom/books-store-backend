@@ -9,8 +9,6 @@ export interface IOrderController {
   addBookToOrder(req: Request, res: Response): void;
   removeBookFromOrder(req: Request, res: Response): void;
   updateBookQuantity(req: Request, res: Response): void;
-  purchaseOrder(req: Request, res: Response): void;
-  cancelOrder(req: Request, res: Response): void;
 }
 
 class OrderController implements IOrderController {
@@ -38,13 +36,6 @@ class OrderController implements IOrderController {
     res.json(req.body.user.orders);
   }
 
-  async updateOrder(req: Request, res: Response) {
-    const { id } = req.params;
-    const order = this.orderService.updateOrder(id, req.body.status);
-    if (order) return res.json(order);
-    res.sendStatus(404);
-  }
-
   async addBookToOrder(req: Request, res: Response) {
     const { id } = req.params;
     const { bookId } = req.body;
@@ -66,15 +57,12 @@ class OrderController implements IOrderController {
     res.json(order);
   }
 
-  async purchaseOrder(req: Request, res: Response) {
+  async updateOrder(req: Request, res: Response) {
     const { id } = req.params;
-    const order = await this.orderService.updateOrder(id, "purchased");
-    res.json(order);
-  }
-
-  async cancelOrder(req: Request, res: Response) {
-    const { id } = req.params;
-    const order = await this.orderService.updateOrder(id, "cancelled");
-    res.json(order);
+    const order = this.orderService.updateOrder(id, req.body.status);
+    if (order) return res.json(order);
+    res.sendStatus(404);
   }
 }
+
+export default OrderController;
