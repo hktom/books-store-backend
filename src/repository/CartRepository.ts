@@ -4,7 +4,7 @@ import { Book } from "../entity/Book";
 import { Order } from "../entity/Order";
 
 export interface ICartRepository {
-  createCart: (cart: ICart, book: Book, order: Order) => Promise<ICart>;
+  createCart: (cart: Partial<ICart>) => Promise<ICart>;
   updateCart: (
     id: string,
     quantity: number,
@@ -24,12 +24,12 @@ class CartRepository implements ICartRepository {
     return await this.repository.findOneBy({ id: id });
   }
 
-  async createCart(cart: ICart) {
+  async createCart(cart: Partial<ICart>) {
     const newCart = new Cart();
-    newCart.quantity = cart.quantity;
-    newCart.total = cart.total;
-    newCart.book = cart.book;
-    newCart.order = cart.order;
+    newCart.quantity = cart.quantity!;
+    newCart.total = cart.total!;
+    newCart.book = cart.book!;
+    newCart.order = cart.order!;
 
     return await this.repository.save(newCart);
   }
@@ -44,10 +44,11 @@ class CartRepository implements ICartRepository {
     return null;
   }
 
-  async deleteCart(id: string) {
+  async deleteCart(id: string): Promise<ICart | null> {
     const cart = await this.findCartById(id);
     if (cart) {
-      return await this.repository.remove(cart);
+      await this.repository.remove(cart);
+      return cart;
     }
     return null;
   }

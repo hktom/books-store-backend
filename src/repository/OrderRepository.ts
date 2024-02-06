@@ -4,8 +4,13 @@ import { IOrder, Order } from "../entity/Order";
 export interface IOrderRepository {
   getOrders: () => Promise<Order[]>;
   getOrderById: (id: string) => Promise<Order | null>;
+  getOrderByStatus: (status: string) => Promise<Order | null>;
   createOrder: (order: any) => Promise<Order>;
-  updateOrder: (id: string, status: string) => Promise<Order | null>;
+  updateOrder: (
+    id: string,
+    status: string,
+    total?: number
+  ) => Promise<Order | null>;
   deleteOrder: (id: string) => Promise<Order | null>;
 }
 
@@ -24,6 +29,10 @@ class OrderRepository implements IOrderRepository {
     return await this.repository.findOneBy({ id: id });
   }
 
+  async getOrderByStatus(status: string) {
+    return await this.repository.findOneBy({ status: status });
+  }
+
   async createOrder(order: IOrder) {
     const newOrder = new Order();
     newOrder.status = order.status;
@@ -32,9 +41,10 @@ class OrderRepository implements IOrderRepository {
     return await this.repository.save(newOrder);
   }
 
-  async updateOrder(id: string, status: string) {
+  async updateOrder(id: string, status: string, total?: number) {
     const order = await this.getOrderById(id);
     if (order) {
+      order.total = total || order.total;
       order.status = status;
       return await this.repository.save(order);
     }

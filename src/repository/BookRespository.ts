@@ -2,8 +2,8 @@ import { DataSource, EntityTarget, Repository } from "typeorm";
 import { Book, IBook } from "../entity/Book";
 
 export interface IBookRepository {
-  getBooks(): Promise<any>;
-  getBookById(id: string): Promise<any>;
+  getBooks(): Promise<IBook[]>;
+  getBookById(id: string): Promise<IBook | null>;
   createBook(book: Partial<IBook>): Promise<any>;
   updateBook(id: string, payload: Partial<IBook>): Promise<any>;
   deleteBook(id: string): Promise<any>;
