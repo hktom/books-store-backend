@@ -37,7 +37,8 @@ export const bootstrap = (): IBootstrap => {
   const orderService = new OrderService(
     orderRepository,
     cartRepository,
-    bookRepository
+    bookRepository,
+    userRepository
   );
   const shoppingService = new ShoppingService(bookRepository);
 
@@ -48,7 +49,3 @@ export const bootstrap = (): IBootstrap => {
     shoppingService,
   };
 };
-
-// export const authenticationController = new AuthenticationController(
-//   new AuthenticationService(userRepository, jwtService)
-// );

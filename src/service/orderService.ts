@@ -1,7 +1,9 @@
 import { IOrder } from "../entity/Order";
+import { IUser, User } from "../entity/User";
 import { IBookRepository } from "../repository/BookRespository";
 import { ICartRepository } from "../repository/CartRepository";
 import { IOrderRepository } from "../repository/OrderRepository";
+import { IUserRepository } from "../repository/UserRepository";
 
 export interface IOrderService {
   createOrder(order: any): Promise<any>;
@@ -14,13 +16,16 @@ export interface IOrderService {
     quantity: number
   ): Promise<any>;
   deleteOrder(id: string): Promise<any>;
+  purchaseOrder(user: IUser): Promise<any>;
+  declineOrder(user: IUser, id: string): Promise<any>;
 }
 
 class OrderService implements IOrderService {
   constructor(
     private orderRepository: IOrderRepository,
     private cartRepository: ICartRepository,
-    private bookRepository: IBookRepository
+    private bookRepository: IBookRepository,
+    private userRepository: IUserRepository
   ) {}
 
   private async getBookById(bookId: string) {
@@ -36,6 +41,29 @@ class OrderService implements IOrderService {
     if (!order) new Error("Order not found");
 
     return order;
+  }
+
+  async purchaseOrder(user: IUser) {
+    const order = await this.getOrderByStatus();
+    const me = user;
+    if (me.points < order!.total) return "Insufficient points";
+
+    me.points -= order!.total;
+
+    await this.orderRepository.updateOrder(order!.id, "purchased");
+    await this.userRepository.updateUserPoint(me.id, me.points);
+    return "Order purchased successfully";
+  }
+
+  async declineOrder(user: IUser, id: string) {
+    const order = await this.orderRepository.getOrderById(id);
+    if (!order) return new Error("Order not found");
+    const me = user;
+    me.points += order!.total;
+
+    await this.orderRepository.updateOrder(order!.id, "declined");
+    await this.userRepository.updateUserPoint(me.id, me.points);
+    return "Order declined successfully";
   }
 
   async createOrder(order: any) {
@@ -87,7 +115,7 @@ class OrderService implements IOrderService {
       book: book,
     });
     order = await this.getOrderByStatus();
-    let carts = order!.carts.map((cart) => ({total: cart.total}));
+    let carts = order!.carts.map((cart) => ({ total: cart.total }));
     let total = carts.reduce((acc, cur) => acc + cur.total, 0);
 
     return await this.orderRepository.updateOrder(order!.id, "pending", total);

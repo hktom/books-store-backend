@@ -9,6 +9,7 @@ export interface IOrderController {
   addBookToOrder(req: Request, res: Response): void;
   removeBookFromOrder(req: Request, res: Response): void;
   updateBookQuantity(req: Request, res: Response): void;
+  placeOrder(req: Request, res: Response): void;
 }
 
 class OrderController implements IOrderController {
@@ -62,6 +63,11 @@ class OrderController implements IOrderController {
     const order = this.orderService.updateOrder(id, req.body.status);
     if (order) return res.json(order);
     res.sendStatus(404);
+  }
+
+  async placeOrder(req: Request, res: Response) {
+    const message = this.orderService.purchaseOrder(req.body.user);
+    res.json({ message });
   }
 }
 

@@ -3,6 +3,7 @@ import { User } from "../entity/User";
 
 export interface IUserRepository {
   getUsers(): Promise<any[]>;
+  updateUserPoint(id: string, points: number): Promise<any>;
   getUserByEmail(email: string): Promise<User | any>;
   createUser(user: any): Promise<User>;
 }
@@ -29,6 +30,10 @@ class UserRepository implements IUserRepository {
     user.email = payload.email;
     user.password = payload.password;
     return await this.repository.save(user);
+  }
+
+  async updateUserPoint(id: string, points: number) {
+    await this.repository.update(id, { points: points });
   }
 }
 

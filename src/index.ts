@@ -75,6 +75,13 @@ app.get(
   (req: Request, res: Response) => orderController.updateOrder(req, res)
 );
 
+app.get(
+  "/order/purchase",
+  (req: Request, res: Response, next: any) =>
+    orderController.getUser(req, res, next),
+  (req: Request, res: Response) => orderController.placeOrder(req, res)
+);
+
 app.post("/login", (req: Request, res: Response) =>
   authenticationController.login(req, res)
 );
