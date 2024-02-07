@@ -27,6 +27,11 @@ class OrderController implements IOrderController {
   async updateOrder(req: Request, res: Response) {
     const user = req.body.user;
     const order = req.body.order;
+    order.status = req.body.status;
+
+    if (order.status !== "cancelled" && order.status !== "purchased") {
+      return res.status(400).json({ message: "bad status" });
+    }
 
     if (order.status === "purchased") {
       user.points = user.points - order.total;
@@ -40,8 +45,11 @@ class OrderController implements IOrderController {
       user.points = user.points + order.total;
     }
 
-    const update = await this.orderService.updateOrder(order);
-    await this.userService.updaterUser(user);
+    const update = await this.orderService.updateOrder({
+      id: order.id,
+      status: order.status,
+    });
+    await this.userService.updaterUser({ id: user.id, points: user.points });
     res.json(update);
   }
 }

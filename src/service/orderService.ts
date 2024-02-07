@@ -6,7 +6,7 @@ export interface IOrderService {
   getOrderById(id: string): Promise<Order | null>;
   getOrderByStatus(status: string): Promise<any>;
   createOrder(user: IUser, order: any): Promise<any>;
-  updateOrder(order: IOrder): Promise<any>;
+  updateOrder(order: Partial<IOrder>): Promise<any>;
 }
 
 class OrderService implements IOrderService {
@@ -22,7 +22,7 @@ class OrderService implements IOrderService {
     return order;
   }
 
-  async updateOrder(order: IOrder) {
+  async updateOrder(order: Partial<IOrder>) {
     return await this.orderRepository.updateOrder(order);
   }
 
