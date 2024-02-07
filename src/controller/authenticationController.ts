@@ -5,6 +5,7 @@ import AuthenticationService, {
 import { IUser } from "../entity/User";
 
 export interface IAuthenticationController {
+  me(req: Request, res: Response): void;
   login(req: Request, res: Response): void;
   register(req: Request, res: Response): void;
   logout(req: Request, res: Response): void;
@@ -12,6 +13,10 @@ export interface IAuthenticationController {
 
 class AuthenticationController implements IAuthenticationController {
   constructor(private authenticationService: IAuthenticationService) {}
+
+  async me(req: Request, res: Response) {
+    res.json(req.body.user);
+  }
 
   async login(req: Request, res: Response) {
     const { email, password } = req.body;

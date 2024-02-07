@@ -16,11 +16,11 @@ class AuthenticationService implements IAuthenticationService {
   ) {}
 
   async me(token: string) {
-    const userEmail = this.jwtService.verifyToken(token);
-    if (!userEmail) {
+    const userId = this.jwtService.verifyToken(token);
+    if (!userId) {
       return null;
     }
-    return await this.userRepository.getUserByEmail(userEmail);
+    return await this.userRepository.getUserById(userId);
   }
 
   private async getUserByEmail(email: string) {

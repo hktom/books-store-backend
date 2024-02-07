@@ -29,6 +29,7 @@ class OrderController implements IOrderController {
     if (!user) return res.sendStatus(401);
 
     req.body.user = user;
+    req.body.token = token;
 
     next();
   }

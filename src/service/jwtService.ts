@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export interface IJwtService {
-  generateToken: (email: string) => string;
+  generateToken: (id: string) => string;
   verifyToken: (token: string) => string | null;
   removeToken: (token: string) => void;
 }
@@ -15,8 +15,8 @@ class JwtService implements IJwtService {
 
   constructor() {}
 
-  generateToken(email: string) {
-    return jwt.sign({ email }, this.jwtSecret, {
+  generateToken(id: string) {
+    return jwt.sign({ id }, this.jwtSecret, {
       expiresIn: this.jwtExpiration,
     });
   }
@@ -26,10 +26,10 @@ class JwtService implements IJwtService {
     jwt.verify(token, this.jwtSecret, (err: any, user: any) => {
       if (err) {
         result = null;
+      } else {
+        result = user.id;
       }
-      result = user.email;
     });
-
     return result;
   }
 
