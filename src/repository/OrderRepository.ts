@@ -5,8 +5,8 @@ import { IUser } from "../entity/User";
 export interface IOrderRepository {
   getOrderById: (id: string) => Promise<Order | null>;
   getOrderByStatus: (status: string) => Promise<Order | null>;
-  createOrder: (user: IUser, order: any) => Promise<String>;
-  updateOrder: (order: Partial<IOrder>) => Promise<String | null>;
+  createOrder: (user: IUser, order: any) => Promise<string>;
+  updateOrder: (order: Partial<IOrder>) => Promise<string | null>;
 }
 
 class OrderRepository implements IOrderRepository {

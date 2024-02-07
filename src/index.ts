@@ -6,6 +6,8 @@ import AuthenticationController from "./controller/authenticationController";
 import BookController from "./controller/bookController";
 import OrderController from "./controller/orderController";
 import cors from "cors";
+import CartController from "./controller/cartControler";
+import { Middleware } from "./controller/middleware";
 
 dotenv.config();
 
@@ -21,7 +23,7 @@ AppDataSource.initialize()
   })
   .catch((error) => console.error(error));
 
-const { authenticationService, orderService, shoppingService, jwtService } =
+const { authenticationService, orderService, shoppingService, cartService } =
   bootstrap();
 
 const authenticationController = new AuthenticationController(
@@ -29,11 +31,16 @@ const authenticationController = new AuthenticationController(
 );
 
 const bookController = new BookController(shoppingService);
-const orderController = new OrderController(
+const orderController = new OrderController(orderService);
+const cartController = new CartController(cartService);
+const middleware = new Middleware(
+  authenticationService,
+  shoppingService,
   orderService,
-  authenticationService
+  cartService
 );
 
+// book route
 app.get("/books", (req: Request, res: Response) =>
   bookController.getBooks(req, res)
 );
@@ -44,58 +51,47 @@ app.post("/book/create", (req: Request, res: Response) =>
   bookController.createBook(req, res)
 );
 
+// order route
 app.get(
   "/orders",
-  (req: Request, res: Response, next: any) =>
-    orderController.getUser(req, res, next),
+  (req: Request, res: Response, next: any) => middleware.check(req, res, next),
   (req: Request, res: Response) => orderController.getOrders(req, res)
 );
 
 app.get(
-  "/orders/:status",
-  (req: Request, res: Response, next: any) =>
-    orderController.getUser(req, res, next),
-  (req: Request, res: Response, next: any) =>
-    orderController.getUser(req, res, next),
-  (req: Request, res: Response) => orderController.get (req, res)
+  "/order/current",
+  (req: Request, res: Response, next: any) => middleware.check(req, res, next),
+  (req: Request, res: Response) => orderController.getCurrentOrder(req, res)
 );
 
-app.get(
-  "/orders/addBook/:id",
-  (req: Request, res: Response, next: any) =>
-    orderController.getUser(req, res, next),
-  (req: Request, res: Response) => orderController.addBookToOrder(req, res)
-);
-app.get(
-  "/orders/removeBook/:id",
-  (req: Request, res: Response, next: any) =>
-    orderController.getUser(req, res, next),
-  (req: Request, res: Response) => orderController.removeBookFromOrder(req, res)
-);
-app.get(
-  "/orders/updateQuantity",
-  (req: Request, res: Response, next: any) =>
-    orderController.getUser(req, res, next),
-  (req: Request, res: Response) => orderController.updateBookQuantity(req, res)
-);
-app.get(
-  "/orders/updateOrder",
-  (req: Request, res: Response, next: any) =>
-    orderController.getUser(req, res, next),
+app.put(
+  "/order/update",
+  (req: Request, res: Response, next: any) => middleware.check(req, res, next),
   (req: Request, res: Response) => orderController.updateOrder(req, res)
 );
 
-app.get(
-  "/order/purchase",
-  (req: Request, res: Response, next: any) =>
-    orderController.getUser(req, res, next),
-  (req: Request, res: Response) => orderController.placeOrder(req, res)
+// cart route
+app.post(
+  "/cart/create",
+  (req: Request, res: Response, next: any) => middleware.check(req, res, next),
+  (req: Request, res: Response) => cartController.addBookToCart(req, res)
 );
 
 app.get(
+  "/cart/remove",
+  (req: Request, res: Response, next: any) => middleware.check(req, res, next),
+  (req: Request, res: Response) => cartController.removeBookFromCart(req, res)
+);
+app.get(
+  "/cart/update",
+  (req: Request, res: Response, next: any) => middleware.check(req, res, next),
+  (req: Request, res: Response) => cartController.updateCart(req, res)
+);
+
+// user route
+app.get(
   "/me",
-  (req: Request, res: Response, next: any) =>
-    orderController.getUser(req, res, next),
+  (req: Request, res: Response, next: any) => middleware.check(req, res, next),
   (req: Request, res: Response) => authenticationController.me(req, res)
 );
 
