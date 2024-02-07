@@ -7,10 +7,12 @@ import {
 } from "typeorm";
 import { Book } from "./Book";
 import { Order } from "./Order";
+import { TransformerMoney } from "../config/transformMoney";
 
 export interface ICart {
   id: string;
   quantity: number;
+  unitPrice: number;
   total: number;
   book: Book;
   order: Order;
@@ -24,7 +26,15 @@ export class Cart {
   @Column("int")
   quantity!: number;
 
-  @Column("money")
+  @Column("money", {
+    nullable: true,
+    transformer: new TransformerMoney(),
+  })
+  unitPrice!: number;
+
+  @Column("money", {
+    transformer: new TransformerMoney(),
+  })
   total!: number;
 
   @ManyToOne(() => Book, (book) => book.id)

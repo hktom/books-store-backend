@@ -30,6 +30,7 @@ class CartRepository implements ICartRepository {
     const newCart = new Cart();
     newCart.quantity = cart.quantity!;
     newCart.total = cart.total!;
+    newCart.unitPrice = cart.book!.point!;
     newCart.book = cart.book!;
     newCart.order = cart.order!;
     await this.repository.save(newCart);

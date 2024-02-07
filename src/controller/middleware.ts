@@ -34,7 +34,15 @@ export class Middleware implements IMiddleware {
       const cart = await this.cartService.getCartById(req.body.cartId);
       if (!cart) return false;
       req.body.cart = cart;
+      req.body.cart.total = Math.round(req.body.book.point * req.body.quantity);
       req.body.order = cart.order;
+    } else {
+      req.body.cart = {
+        book: req.body.book,
+        quantity: req.body.quantity,
+        total: Math.round(req.body.book.point * req.body.quantity),
+        order: req.body.currentOrder,
+      };
     }
     return true;
   }
@@ -88,15 +96,15 @@ export class Middleware implements IMiddleware {
     if (!(await this.userMiddleware(req, res, next))) {
       return res.status(401).send("Unauthorized");
     }
-    // if (!(await this.bookMiddleware(req, res, next))) {
-    //   return res.status(404).send("Book not found");
-    // }
+    if (!(await this.bookMiddleware(req, res, next))) {
+      return res.status(404).send("Book not found");
+    }
     if (!(await this.orderMiddleware(req, res, next))) {
       return res.status(500).send("Internal Server Error");
     }
-    // if (!(await this.cartMiddleware(req, res, next))) {
-    //   return res.status(500).send("Internal Server Error");
-    // }
+    if (!(await this.cartMiddleware(req, res, next))) {
+      return res.status(500).send("Internal Server Error");
+    }
 
     next();
   }

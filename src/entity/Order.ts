@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { Cart } from "./Cart";
 import { User } from "./User";
+import { TransformerMoney } from "../config/transformMoney";
 
 export interface IOrder {
   id: string;
@@ -22,7 +23,9 @@ export class Order {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
 
-  @Column("money")
+  @Column("money", {
+    transformer: new TransformerMoney(),
+  })
   total!: number;
 
   @Column("varchar", { length: 255 })

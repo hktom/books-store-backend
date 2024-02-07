@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { TransformerMoney } from "../config/transformMoney";
 
 export interface IBook {
   id: string;
@@ -25,7 +26,9 @@ export class Book {
   @Column("text")
   cover!: string;
 
-  @Column("money")
+  @Column("money", {
+    transformer: new TransformerMoney(),
+  })
   point!: number;
 
   @Column("varchar", { array: true })
