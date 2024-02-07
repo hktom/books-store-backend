@@ -1,17 +1,12 @@
 import { DataSource, EntityTarget, Repository } from "typeorm";
 import { IOrder, Order } from "../entity/Order";
+import { IUser } from "../entity/User";
 
 export interface IOrderRepository {
-  getOrders: () => Promise<Order[]>;
   getOrderById: (id: string) => Promise<Order | null>;
   getOrderByStatus: (status: string) => Promise<Order | null>;
-  createOrder: (order: any) => Promise<Order>;
-  updateOrder: (
-    id: string,
-    status: string,
-    total?: number
-  ) => Promise<Order | null>;
-  deleteOrder: (id: string) => Promise<Order | null>;
+  createOrder: (user: IUser, order: any) => Promise<String>;
+  updateOrder: (order: Partial<IOrder>) => Promise<String | null>;
 }
 
 class OrderRepository implements IOrderRepository {
@@ -19,10 +14,6 @@ class OrderRepository implements IOrderRepository {
 
   constructor(dataSource: DataSource, order: EntityTarget<Order>) {
     this.repository = dataSource.getRepository(order);
-  }
-
-  async getOrders() {
-    return [];
   }
 
   async getOrderById(id: string) {
@@ -51,30 +42,23 @@ class OrderRepository implements IOrderRepository {
     return null;
   }
 
-  async createOrder(order: IOrder) {
+  async createOrder(user: IUser, order: IOrder) {
     const newOrder = new Order();
     newOrder.status = order.status;
     newOrder.total = order.total;
-    newOrder.user = order.user;
-    return await this.repository.save(newOrder);
+    newOrder.user = user;
+    await this.repository.save(newOrder);
+    return newOrder.id!;
   }
 
-  async updateOrder(id: string, status: string, total?: number) {
-    const order = await this.getOrderById(id);
-    if (order) {
-      order.total = total || order.total;
-      order.status = status;
-      return await this.repository.save(order);
-    }
-    return null;
+  async updateOrder(order: Partial<IOrder>) {
+    await this.repository.update(order.id!, order);
+    return order.id!;
   }
 
-  async deleteOrder(id: string) {
-    const order = await this.getOrderById(id);
-    if (order) {
-      return await this.repository.remove(order);
-    }
-    return null;
+  async deleteOrder(order: IOrder) {
+    await this.repository.remove(order);
+    return order.id!;
   }
 }
 

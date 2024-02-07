@@ -1,61 +1,63 @@
 import { Request, Response } from "express";
 import OrderService from "../service/orderService";
-import AuthenticationService from "../service/authenticationService";
+import { IOrder } from "../entity/Order";
+import { IShoppingService } from "../service/shoppingService";
 
 export interface IOrderController {
-  getUser(req: Request, res: Response, next: any): void;
   getOrders(req: Request, res: Response): void;
+  createOrder(req: Request, res: Response): void;
   updateOrder(req: Request, res: Response): void;
   addBookToOrder(req: Request, res: Response): void;
   removeBookFromOrder(req: Request, res: Response): void;
   updateBookQuantity(req: Request, res: Response): void;
   placeOrder(req: Request, res: Response): void;
+  getCurrentOrder(req: Request, res: Response): void;
 }
 
 class OrderController implements IOrderController {
   constructor(
     private orderService: OrderService,
-    private authenticationService: AuthenticationService
+    private bookService: IShoppingService
   ) {}
-
-  async getUser(req: Request, res: Response, next: any) {
-    const authHeader = req.headers["authorization"];
-    const token = authHeader && authHeader.split(" ")[1];
-
-    if (token == null) return res.sendStatus(401);
-
-    const user = await this.authenticationService.me(token);
-
-    if (!user) return res.sendStatus(401);
-
-    req.body.user = user;
-    req.body.token = token;
-
-    next();
-  }
 
   async getOrders(req: Request, res: Response) {
     res.json(req.body.user.orders);
   }
 
-  async addBookToOrder(req: Request, res: Response) {
-    const { id } = req.params;
-    const { bookId } = req.body;
-    const order = this.orderService.addBookToOrder(bookId);
+  async getCurrentOrder(req: Request, res: Response) {
+    const order = req.body.currentOrder;
     res.json(order);
+  }
+
+  async addBookToOrder(req: Request, res: Response) {
+    const { book, currentOrder, quantity } = req.body;
+
+    currentOrder.total += Math.round(book.price * quantity);
+
+    await this.orderService.addBookToOrder(book, currentOrder, quantity);
+    await this.orderService.updateOrder(req.body.user, currentOrder);
+
+    res.json({ message: "Book added to order" });
   }
 
   async removeBookFromOrder(req: Request, res: Response) {
-    const { id } = req.params;
-    const { bookId } = req.body;
-    const order = this.orderService.removeBookFromOrder(id, bookId);
-    res.json(order);
+    const { cart, currentOrder } = req.body;
+    const order = await this.orderService.removeBookFromOrder(cart.id);
+    currentOrder.total -= cart.total;
+
+    await this.orderService.updateOrder(req.body.user, currentOrder);
+    res.json({ message: "Book removed from order" });
   }
 
   async updateBookQuantity(req: Request, res: Response) {
-    const { id } = req.params;
-    const { bookId, quantity } = req.body;
-    const order = this.orderService.updateBookQuantity(id, bookId, quantity);
+    const { book, quantity, cart } = req.body;
+    cart.quantity = quantity;
+    cart.total = Math.round(book.price * quantity);
+    const order = this.orderService.updateBookQuantity(
+      req.body.user,
+      cart,
+      req.body.currentOrder
+    );
     res.json(order);
   }
 

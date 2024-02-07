@@ -50,6 +50,16 @@ app.get(
     orderController.getUser(req, res, next),
   (req: Request, res: Response) => orderController.getOrders(req, res)
 );
+
+app.get(
+  "/orders/:status",
+  (req: Request, res: Response, next: any) =>
+    orderController.getUser(req, res, next),
+  (req: Request, res: Response, next: any) =>
+    orderController.getUser(req, res, next),
+  (req: Request, res: Response) => orderController.get (req, res)
+);
+
 app.get(
   "/orders/addBook/:id",
   (req: Request, res: Response, next: any) =>

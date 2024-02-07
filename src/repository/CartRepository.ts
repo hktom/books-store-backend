@@ -1,16 +1,11 @@
 import { DataSource, EntityTarget, Repository } from "typeorm";
 import { Cart, ICart } from "../entity/Cart";
-import { Book } from "../entity/Book";
-import { Order } from "../entity/Order";
 
 export interface ICartRepository {
-  createCart: (cart: Partial<ICart>) => Promise<ICart>;
-  updateCart: (
-    id: string,
-    quantity: number,
-    total: number
-  ) => Promise<ICart | null>;
-  deleteCart: (id: string) => Promise<ICart | null>;
+  getCartById: (id: string) => Promise<ICart | null>;
+  createCart: (cart: Partial<ICart>) => Promise<string>;
+  updateCart: (cart: Partial<ICart>) => Promise<string | null>;
+  deleteCart: (cart: ICart) => Promise<string | null>;
 }
 
 class CartRepository implements ICartRepository {
@@ -20,8 +15,15 @@ class CartRepository implements ICartRepository {
     this.repository = dataSource.getRepository(cart);
   }
 
-  private async findCartById(id: string) {
-    return await this.repository.findOneBy({ id: id });
+  async getCartById(id: string) {
+    const cart = await this.repository.find({
+      relations: ["order"],
+      where: { id: id },
+    });
+    if (cart.length) {
+      return cart[0];
+    }
+    return null;
   }
 
   async createCart(cart: Partial<ICart>) {
@@ -30,27 +32,18 @@ class CartRepository implements ICartRepository {
     newCart.total = cart.total!;
     newCart.book = cart.book!;
     newCart.order = cart.order!;
-
-    return await this.repository.save(newCart);
+    await this.repository.save(newCart);
+    return newCart.id!;
   }
 
-  async updateCart(id: string, number: number, total: number) {
-    const cart = await this.findCartById(id);
-    if (cart) {
-      cart.quantity = number || cart.quantity;
-      cart.total = total || cart.total;
-      return await this.repository.save(cart);
-    }
-    return null;
+  async updateCart(cart: Partial<ICart>) {
+    await this.repository.update(cart.id!, cart);
+    return cart.id!;
   }
 
-  async deleteCart(id: string): Promise<ICart | null> {
-    const cart = await this.findCartById(id);
-    if (cart) {
-      await this.repository.remove(cart);
-      return cart;
-    }
-    return null;
+  async deleteCart(cart: Cart) {
+    await this.repository.remove(cart);
+    return cart.id;
   }
 }
 
