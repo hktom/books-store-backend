@@ -77,12 +77,12 @@ app.post(
   (req: Request, res: Response) => cartController.addBookToCart(req, res)
 );
 
-app.get(
+app.delete(
   "/cart/remove",
   (req: Request, res: Response, next: any) => middleware.check(req, res, next),
   (req: Request, res: Response) => cartController.removeBookFromCart(req, res)
 );
-app.get(
+app.put(
   "/cart/update",
   (req: Request, res: Response, next: any) => middleware.check(req, res, next),
   (req: Request, res: Response) => cartController.updateCart(req, res)
