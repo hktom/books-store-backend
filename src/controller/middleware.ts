@@ -42,11 +42,14 @@ export class Middleware implements IMiddleware {
   private async orderMiddleware(req: Request, res: Response, next: any) {
     const user = req.body.user;
     const orders = user.orders;
-    const pendingOrderId = orders.find(
+    req.body.orders = orders;
+    let currentOrder = orders.find(
       (order: IOrder) => order.status === "pending"
     );
-    let currentOrder = await this.orderService.getOrderById(pendingOrderId);
-    if (!currentOrder) {
+
+    if (currentOrder) {
+      currentOrder = await this.orderService.getOrderById(currentOrder.id);
+    } else {
       const orderId = await this.orderService.createOrder(user, {
         status: "pending",
         total: 0,
@@ -73,8 +76,6 @@ export class Middleware implements IMiddleware {
 
     const user = await this.authenticationService.me(token);
 
-    console.log("user", user);
-
     if (!user) return false;
 
     req.body.user = user;
@@ -87,15 +88,15 @@ export class Middleware implements IMiddleware {
     if (!(await this.userMiddleware(req, res, next))) {
       return res.status(401).send("Unauthorized");
     }
-    if (!(await this.bookMiddleware(req, res, next))) {
-      return res.status(404).send("Book not found");
-    }
+    // if (!(await this.bookMiddleware(req, res, next))) {
+    //   return res.status(404).send("Book not found");
+    // }
     if (!(await this.orderMiddleware(req, res, next))) {
       return res.status(500).send("Internal Server Error");
     }
-    if (!(await this.cartMiddleware(req, res, next))) {
-      return res.status(500).send("Internal Server Error");
-    }
+    // if (!(await this.cartMiddleware(req, res, next))) {
+    //   return res.status(500).send("Internal Server Error");
+    // }
 
     next();
   }

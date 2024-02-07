@@ -16,9 +16,7 @@ class OrderController implements IOrderController {
   }
 
   async getCurrentOrder(req: Request, res: Response) {
-    const order = req.body.orders.find(
-      (order: IOrder) => order.status === "pending"
-    );
+    const order = req.body.currentOrder;
     res.json(order);
   }
 
