@@ -1,9 +1,10 @@
 import { DataSource, EntityTarget, Repository } from "typeorm";
-import { User } from "../entity/User";
+import { IUser, User } from "../entity/User";
 
 export interface IUserRepository {
   getUsers(): Promise<any[]>;
-  updateUserPoint(id: string, points: number): Promise<any>;
+  // updateUserPoint(id: string, points: number): Promise<any>;
+  updateProfile(user: Partial<IUser>): Promise<any>;
   getUserById(id: string): Promise<User | any>;
   getUserByEmail(email: string): Promise<User | any>;
   createUser(user: any): Promise<User>;
@@ -55,9 +56,9 @@ class UserRepository implements IUserRepository {
     return await this.repository.save(user);
   }
 
-  async updateUserPoint(id: string, points: number) {
-    await this.repository.update(id, { points: points });
-    return this.getUserById(id);
+  async updateProfile(payload: Partial<IUser>) {
+    await this.repository.update(payload.id!, payload);
+    return "User updated successfully";
   }
 }
 

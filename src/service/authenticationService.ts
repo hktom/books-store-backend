@@ -7,6 +7,7 @@ export interface IAuthenticationService {
   login(email: string, password: string): Promise<string | null>;
   register(user: Partial<IUser>): Promise<string | null>;
   logout(token: string): Promise<void>;
+  updaterUser(user: Partial<IUser>): Promise<IUser | null>;
 }
 
 class AuthenticationService implements IAuthenticationService {
@@ -21,6 +22,10 @@ class AuthenticationService implements IAuthenticationService {
       return null;
     }
     return await this.userRepository.getUserById(userId);
+  }
+
+  async updaterUser(user: Partial<IUser>) {
+    return this.userRepository.updateProfile(user);
   }
 
   private async getUserByEmail(email: string) {

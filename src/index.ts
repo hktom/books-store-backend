@@ -31,8 +31,11 @@ const authenticationController = new AuthenticationController(
 );
 
 const bookController = new BookController(shoppingService);
-const orderController = new OrderController(orderService);
-const cartController = new CartController(cartService);
+const orderController = new OrderController(
+  orderService,
+  authenticationService
+);
+const cartController = new CartController(cartService, orderService);
 const middleware = new Middleware(
   authenticationService,
   shoppingService,
