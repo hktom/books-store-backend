@@ -8,6 +8,7 @@ export interface IUser {
   email: string;
   password: string;
   orders: Order[];
+  points: number;
 }
 
 @Entity()
@@ -26,6 +27,9 @@ export class User {
 
   @Column("varchar", { length: 255 })
   password!: string;
+
+  @Column("money", { default: 100 })
+  points!: number;
 
   @OneToMany(() => Order, (order) => order.user, { nullable: true })
   orders!: Order[];
