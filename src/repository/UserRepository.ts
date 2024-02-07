@@ -21,11 +21,29 @@ class UserRepository implements IUserRepository {
   }
 
   async getUserByEmail(email: string) {
-    return await this.repository.findOneBy({ email: email });
+    const user = await this.repository.find({
+      relations: ["orders"],
+      where: { email: email },
+    });
+
+    if (user.length) {
+      return user[0];
+    }
+
+    return null;
   }
 
   async getUserById(id: string) {
-    return await this.repository.findOneBy({ id: id });
+    const user = await this.repository.find({
+      relations: ["orders"],
+      where: { id: id },
+    });
+
+    if (user.length) {
+      return user[0];
+    }
+
+    return null;
   }
 
   async createUser(payload: any) {
@@ -39,6 +57,7 @@ class UserRepository implements IUserRepository {
 
   async updateUserPoint(id: string, points: number) {
     await this.repository.update(id, { points: points });
+    return this.getUserById(id);
   }
 }
 

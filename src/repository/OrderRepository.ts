@@ -26,11 +26,29 @@ class OrderRepository implements IOrderRepository {
   }
 
   async getOrderById(id: string) {
-    return await this.repository.findOneBy({ id: id });
+    const order = await this.repository.find({
+      relations: ["carts"],
+      where: { id: id },
+    });
+
+    if (order.length) {
+      return order[0];
+    }
+
+    return null;
   }
 
   async getOrderByStatus(status: string) {
-    return await this.repository.findOneBy({ status: status });
+    const order = await this.repository.find({
+      relations: ["carts"],
+      where: { status: status },
+    });
+
+    if (order.length) {
+      return order[0];
+    }
+
+    return null;
   }
 
   async createOrder(order: IOrder) {
