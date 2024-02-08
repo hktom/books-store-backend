@@ -11,7 +11,7 @@ export interface IJwtService {
 
 class JwtService implements IJwtService {
   private jwtSecret = process.env.JWT_SECRET || "";
-  private jwtExpiration = process.env.JWT_EXPIRATION || "1h";
+  private jwtExpiration = process.env.JWT_EXPIRATION || "1d";
 
   constructor() {}
 

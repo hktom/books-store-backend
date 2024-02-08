@@ -40,6 +40,7 @@ export class Middleware implements IMiddleware {
 
     if (!req.body.cartId && req.body.quantity && req.body.bookId) {
       req.body.cart = {
+        bookId: req.body.book.id,
         book: req.body.book,
         quantity: req.body.quantity,
         total: Math.round(req.body.book.point * req.body.quantity),

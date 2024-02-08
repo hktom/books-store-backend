@@ -14,6 +14,9 @@ export interface ICart {
   quantity: number;
   unitPrice: number;
   total: number;
+  bookId: string;
+  bookCover: string;
+  bookTitle: string;
   book: Book;
   order: Order;
 }
@@ -26,6 +29,15 @@ export class Cart {
   @Column("int")
   quantity!: number;
 
+  @Column("varchar")
+  bookId!: string;
+
+  @Column("text")
+  bookCover!: string;
+
+  @Column("varchar")
+  bookTitle!: string;
+
   @Column("money", {
     nullable: true,
     transformer: new TransformerMoney(),
@@ -36,10 +48,6 @@ export class Cart {
     transformer: new TransformerMoney(),
   })
   total!: number;
-
-  @ManyToOne(() => Book, (book) => book.id)
-  @JoinColumn({ name: "book_id" })
-  book!: Book;
 
   @ManyToOne(() => Order, (order) => order.carts, { onDelete: "CASCADE" })
   @JoinColumn({ name: "order_id", referencedColumnName: "id" })

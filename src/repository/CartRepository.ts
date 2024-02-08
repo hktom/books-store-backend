@@ -2,7 +2,7 @@ import { DataSource, EntityTarget, Repository } from "typeorm";
 import { Cart, ICart } from "../entity/Cart";
 
 export interface ICartRepository {
-  getCartById: (id: string) => Promise<ICart | null>;
+  getCartById: (id: string) => Promise<Cart | any>;
   createCart: (cart: Partial<ICart>) => Promise<string>;
   updateCart: (cart: Partial<ICart>) => Promise<string | null>;
   deleteCart: (cart: ICart) => Promise<string | null>;
@@ -31,7 +31,9 @@ class CartRepository implements ICartRepository {
     newCart.quantity = cart.quantity!;
     newCart.total = cart.total!;
     newCart.unitPrice = cart.book!.point!;
-    newCart.book = cart.book!;
+    newCart.bookCover = cart.book!.cover;
+    newCart.bookTitle = cart.book!.title;
+    newCart.bookId = cart.book!.id!;
     newCart.order = cart.order!;
     await this.repository.save(newCart);
     return newCart.id!;

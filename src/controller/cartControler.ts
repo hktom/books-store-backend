@@ -24,7 +24,8 @@ class CartController implements ICartController {
     );
     if (total) {
       order.total = total;
-      await this.orderService.updateOrder(order);
+      const { id } = order;
+      await this.orderService.updateOrder({ id, total });
     }
   }
 
@@ -34,7 +35,8 @@ class CartController implements ICartController {
   }
 
   async addBookToCart(req: Request, res: Response) {
-    await this.cartService.upsertBookToCart(req.body.cart);
+    const {id, quantity, book, total, order}= req.body.cart;
+    await this.cartService.upsertBookToCart({id, quantity, book, total, order});
     await this.updateOrderTotal(req.body.cart.order);
     res.json({ message: "Book added to cart" });
   }
