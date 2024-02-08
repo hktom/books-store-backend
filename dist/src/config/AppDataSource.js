@@ -17,7 +17,7 @@ const AppDataSource = new typeorm_1.DataSource({
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    synchronize: false,
+    synchronize: true,
     logging: true,
     entities: [User_1.User, Book_1.Book, Order_1.Order, Cart_1.Cart],
     subscribers: [],
