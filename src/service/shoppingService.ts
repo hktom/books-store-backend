@@ -7,6 +7,7 @@ export interface IShoppingService {
   createShoppingItem(payload: Partial<IBook>): Promise<any>;
   updateShoppingItem(id: string, payload: any): Promise<any>;
   deleteShoppingItem(id: string): Promise<any>;
+  findBookByTitle(title: string): Promise<IBook[]>;
 }
 
 class ShoppingService implements IShoppingService {
@@ -27,6 +28,10 @@ class ShoppingService implements IShoppingService {
 
   async updateShoppingItem(id: string, payload: any) {
     return await this.bookRepository.updateBook(id, payload);
+  }
+
+  async findBookByTitle(title: string) {
+    return await this.bookRepository.findBookByTitle(title);
   }
 
   async deleteShoppingItem(id: string) {

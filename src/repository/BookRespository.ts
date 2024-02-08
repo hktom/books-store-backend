@@ -7,6 +7,7 @@ export interface IBookRepository {
   createBook(book: Partial<IBook>): Promise<any>;
   updateBook(id: string, payload: Partial<IBook>): Promise<any>;
   deleteBook(id: string): Promise<any>;
+  findBookByTitle(title: string): Promise<IBook[]>;
 }
 
 class BookRepository implements IBookRepository {
@@ -22,6 +23,13 @@ class BookRepository implements IBookRepository {
 
   async getBookById(id: string) {
     return await this.repository.findOneBy({ id: id });
+  }
+
+  async findBookByTitle(title: string) {
+    const books = await this.getBooks();
+    return books.filter((book) =>
+      book.title.toLocaleLowerCase().includes(title.toLocaleLowerCase())
+    );
   }
 
   async createBook(payload: IBook) {

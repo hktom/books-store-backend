@@ -6,6 +6,7 @@ export interface IBookController {
   createBook(req: Request, res: Response): void;
   getBooks(req: Request, res: Response): void;
   getBookById(req: Request, res: Response): void;
+  findBookByTitle(req: Request, res: Response): void;
 }
 
 class BookController implements IBookController {
@@ -26,6 +27,14 @@ class BookController implements IBookController {
 
     if (book) return res.status(201).send("Book created successfully");
     return res.status(500).send("Internal server error");
+  }
+
+  async findBookByTitle(req: Request, res: Response) {
+    const title = req.query.title as string;
+    if (!title) return res.status(400).send("Title is required");
+    const book = await this.ShoppingService.findBookByTitle(title);
+    if (book) return res.status(200).json(book);
+    return res.status(404).send("Book not found");
   }
 
   async getBooks(req: Request, res: Response) {
