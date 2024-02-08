@@ -1,3 +1,4 @@
+import { Middleware } from "../controller/middleware";
 import { Book } from "../entity/Book";
 import { Cart } from "../entity/Cart";
 import { Order } from "../entity/Order";
@@ -43,3 +44,17 @@ export const bootstrap = (): IBootstrap => {
     shoppingService,
   };
 };
+
+export const {
+  authenticationService,
+  orderService,
+  shoppingService,
+  cartService,
+} = bootstrap();
+
+export const middleware = new Middleware(
+  authenticationService,
+  shoppingService,
+  orderService,
+  cartService
+);
